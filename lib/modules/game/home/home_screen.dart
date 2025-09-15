@@ -23,91 +23,94 @@ class HomeScreen extends GetView<HomeController> {
     final HapticService hapticService = Get.find<HapticService>();
     final screenPadding = MediaQuery.of(context).padding;
 
-    return Scaffold(
-      backgroundColor: Color(0xFF0E143F),
-      body: Stack(
-        children: [
-          // Settings Icon (Top Left)
-          Positioned(
-            top: screenPadding.top + 16,
-            left: 16,
-            child: GestureDetector(
-              onTap: () {
-                // NEW: Play button click sound
-                audioService.playButtonClick();
-                hapticService.buttonPress();
-                controller.openSettings();
-              },
-              child: Image.asset('assets/images/Settings.png', width: 60),
-            ),
-          ),
-
-          // Main UI Content (Centered)
-          Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Title Image
-                  Image.asset(
-                    'assets/images/Title.png',
-                    width: Get.width * 0.9,
-                  ),
-                  const SizedBox(height: 40),
-
-                  // User Name Input Field with custom background
-                  _buildUsernameInput(),
-                  const SizedBox(height: 20),
-                  _buildHighScore(),
-                  const SizedBox(height: 20),
-
-                  // Custom Image Button for "Snake Skins"
-                  _buildImageButton(
-                    onTap: () {
-                      // NEW: Play button click sound
-                      audioService.playButtonClick();
-                      hapticService.buttonPress();
-                      Get.toNamed(Routes.CUSTOMIZATION);
-                    },
-                    buttonImage: 'assets/images/Snake Skin Btn.png',
-                    iconImage: 'assets/images/Snake Skin Icon.png',
-                    text: 'Snake Skins',
-                  ),
-                  const SizedBox(height: 15),
-
-                  // Custom Image Button for "Background Skins"
-                  _buildImageButton(
-                    onTap: () {
-                      // NEW: Play button click sound
-                      audioService.playButtonClick();
-                      hapticService.buttonPress();
-                      _showBackgroundPicker();
-                    },
-                    buttonImage: 'assets/images/Background Skin Btn.png',
-                    iconImage: 'assets/images/Background Skin Icon.png',
-                    text: 'Background Skins',
-                  ),
-                  const SizedBox(height: 40),
-
-                  // "Tap to Play" Image Button
-                  GestureDetector(
-                    onTap: () {
-                      // NEW: Play button click sound and switch to game music
-                      audioService.playButtonClick();
-                      hapticService.buttonPress();
-                      audioService.playMusic('game');
-                      Get.toNamed(Routes.GAME);
-                    },
-                    child: Image.asset(
-                      'assets/images/Tap to Play.png',
-                      width: Get.width * 0.8,
-                    ),
-                  ),
-                ],
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: Color(0xFF0E143F),
+        body: Stack(
+          children: [
+            // Settings Icon (Top Left)
+            Positioned(
+              top: screenPadding.top + 16,
+              left: 16,
+              child: GestureDetector(
+                onTap: () {
+                  // NEW: Play button click sound
+                  audioService.playButtonClick();
+                  hapticService.buttonPress();
+                  controller.openSettings();
+                },
+                child: Image.asset('assets/images/Settings.png', width: 60),
               ),
             ),
-          ),
-        ],
+
+            // Main UI Content (Centered)
+            Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Title Image
+                    Image.asset(
+                      'assets/images/Title.png',
+                      width: Get.width * 0.9,
+                    ),
+                    const SizedBox(height: 40),
+
+                    // User Name Input Field with custom background
+                    _buildUsernameInput(),
+                    const SizedBox(height: 20),
+                    _buildHighScore(),
+                    const SizedBox(height: 20),
+
+                    // Custom Image Button for "Snake Skins"
+                    _buildImageButton(
+                      onTap: () {
+                        // NEW: Play button click sound
+                        audioService.playButtonClick();
+                        hapticService.buttonPress();
+                        Get.toNamed(Routes.CUSTOMIZATION);
+                      },
+                      buttonImage: 'assets/images/Snake Skin Btn.png',
+                      iconImage: 'assets/images/Snake Skin Icon.png',
+                      text: 'Snake Skins',
+                    ),
+                    // const SizedBox(height: 15),
+                    //
+                    // // Custom Image Button for "Background Skins"
+                    // _buildImageButton(
+                    //   onTap: () {
+                    //     // NEW: Play button click sound
+                    //     audioService.playButtonClick();
+                    //     hapticService.buttonPress();
+                    //     _showBackgroundPicker();
+                    //   },
+                    //   buttonImage: 'assets/images/Background Skin Btn.png',
+                    //   iconImage: 'assets/images/Background Skin Icon.png',
+                    //   text: 'Background Skins',
+                    // ),
+                    const SizedBox(height: 30),
+
+                    // "Tap to Play" Image Button
+                    GestureDetector(
+                      onTap: () {
+                        // NEW: Play button click sound and switch to game music
+                        audioService.playButtonClick();
+                        hapticService.buttonPress();
+                        audioService.playMusic('game');
+                        Get.toNamed(Routes.GAME);
+                      },
+                      child: Image.asset(
+                        'assets/images/Tap to Play.png',
+                        width: Get.width * 0.8,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -275,52 +278,52 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  void _showBackgroundPicker() {
-    final AudioService audioService = Get.find<AudioService>();  // NEW: Get audio service
-    final settings = Get.find<SettingsService>();
-    final List<Color> choices = [
-      Colors.lightBlueAccent,
-      Colors.black,
-      Colors.white10,
-      Colors.green.shade700,
-      Colors.deepPurple.shade600,
-      Colors.red.shade600,
-      Colors.orange.shade700,
-      Colors.blueGrey.shade800,
-    ];
-    Get.bottomSheet(
-      Container(
-        padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          color: Color(0xFF1E1E1E),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-        ),
-        child: Wrap(
-          runSpacing: 12,
-          spacing: 12,
-          alignment: WrapAlignment.center,
-          children: [
-            for (final c in choices)
-              GestureDetector(
-                onTap: () {
-                  // NEW: Play button click sound
-                  audioService.playButtonClick();
-                  settings.setBackgroundColor(c);
-                  Get.back();
-                },
-                child: Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: c,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white24),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
+  // void _showBackgroundPicker() {
+  //   final AudioService audioService = Get.find<AudioService>();  // NEW: Get audio service
+  //   final settings = Get.find<SettingsService>();
+  //   final List<Color> choices = [
+  //     Colors.lightBlueAccent,
+  //     Colors.black,
+  //     Colors.white10,
+  //     Colors.green.shade700,
+  //     Colors.deepPurple.shade600,
+  //     Colors.red.shade600,
+  //     Colors.orange.shade700,
+  //     Colors.blueGrey.shade800,
+  //   ];
+  //   Get.bottomSheet(
+  //     Container(
+  //       padding: const EdgeInsets.all(16),
+  //       decoration: const BoxDecoration(
+  //         color: Color(0xFF1E1E1E),
+  //         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+  //       ),
+  //       child: Wrap(
+  //         runSpacing: 12,
+  //         spacing: 12,
+  //         alignment: WrapAlignment.center,
+  //         children: [
+  //           for (final c in choices)
+  //             GestureDetector(
+  //               onTap: () {
+  //                 // NEW: Play button click sound
+  //                 audioService.playButtonClick();
+  //                 settings.setBackgroundColor(c);
+  //                 Get.back();
+  //               },
+  //               child: Container(
+  //                 width: 60,
+  //                 height: 60,
+  //                 decoration: BoxDecoration(
+  //                   color: c,
+  //                   borderRadius: BorderRadius.circular(12),
+  //                   border: Border.all(color: Colors.white24),
+  //                 ),
+  //               ),
+  //             ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 }

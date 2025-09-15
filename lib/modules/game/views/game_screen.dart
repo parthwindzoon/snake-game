@@ -423,14 +423,14 @@ class _GameScreenState extends State<GameScreen> {
             } else {
               // Show loading indicator or empty space while ad loads
               return Container(
-                height: 50, // Standard banner height
-                color: Colors.black,
-                child: const Center(
-                  child: Text(
-                    'Loading ad...',
-                    style: TextStyle(color: Colors.white54, fontSize: 12),
-                  ),
-                ),
+                // height: 50, // Standard banner height
+                // color: Colors.black,
+                // child: const Center(
+                //   child: Text(
+                //     'Loading ad...',
+                //     style: TextStyle(color: Colors.white54, fontSize: 12),
+                //   ),
+                // ),
               );
             }
           }),

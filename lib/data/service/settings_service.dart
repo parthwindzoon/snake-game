@@ -102,12 +102,12 @@ class SettingsService {
   Color get backgroundColor {
     final hex = _box.read(_bgColorKey);
     if (hex is int) return Color(hex);
-    return Colors.lightBlueAccent;
+    return Colors.black;
   }
 
-  void setBackgroundColor(Color color) {
-    _box.write(_bgColorKey, color.value);
-  }
+  // void setBackgroundColor(Color color) {
+  //   _box.write(_bgColorKey, Colors.black);
+  // }
 
   // --- INITIALIZATION ---
   // A method to load all settings from storage when the app starts.
