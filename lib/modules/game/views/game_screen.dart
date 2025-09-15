@@ -12,13 +12,14 @@ import 'package:newer_version_snake/modules/game/views/pause_menu.dart';
 import 'package:newer_version_snake/modules/game/views/revive_overlay.dart';
 import '../../../data/service/haptic_service.dart';
 import '../../../data/service/settings_service.dart';
+import '../../../data/service/ad_service.dart'; // Import AdService
 import '../components/ai/ai_manager.dart';
 import '../components/ai/ai_snake_data.dart';
 import '../components/ai/ai_painter.dart';
 import '../components/food/food_painter.dart';
 import '../components/player/player_component.dart';
 import '../components/ui/boost_button.dart';
-import '../components/ui/mini_map.dart';
+// import '../components/ui/mini_map.dart';
 import '../components/ui/pause_button.dart';
 import '../components/world/image_background.dart';
 import '../controllers/player_controller.dart';
@@ -29,7 +30,6 @@ import 'game_over_menu.dart';
 class SlitherGame extends FlameGame with DragCallbacks {
   final PlayerController playerController = Get.find<PlayerController>();
   final HapticService _hapticService = Get.find<HapticService>();
-
 
   late final World world;
   late final AiManager aiManager;
@@ -121,8 +121,8 @@ class SlitherGame extends FlameGame with DragCallbacks {
 
     final boostButton = BoostButton(position: Vector2(50, size.y - 120));
     final pauseButton = PauseButton(position: Vector2(size.x - 70, 50));
-    final minimap = Minimap(player: player, aiManager: aiManager);
-    cameraComponent.viewport.addAll([boostButton, pauseButton, minimap]);
+    // final minimap = Minimap(player: player, aiManager: aiManager);
+    cameraComponent.viewport.addAll([boostButton, pauseButton/*, minimap*/]);
 
     // Initialize food immediately after everything is set up
     _initializeFood();
@@ -361,27 +361,80 @@ class SlitherGame extends FlameGame with DragCallbacks {
   }
 }
 
-class GameScreen extends StatelessWidget {
+class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final slitherGame = SlitherGame();
+  State<GameScreen> createState() => _GameScreenState();
+}
 
+class _GameScreenState extends State<GameScreen> {
+  late final SlitherGame slitherGame;
+  final AdService _adService = Get.find<AdService>();
+
+  @override
+  void initState() {
+    super.initState();
+    slitherGame = SlitherGame();
+    // Load banner ad when game screen initializes
+    _adService.loadBannerAd();
+  }
+
+  @override
+  void dispose() {
+    // Dispose banner ad when leaving game screen
+    _adService.disposeBannerAd();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: GameWidget(
-        game: slitherGame,
-        overlayBuilderMap: {
-          'pauseMenu': (context, game) => PauseMenu(game: game as SlitherGame),
-          'gameOver': (context, game) => GameOverMenu(
-            game: game as SlitherGame,
-            playerController: slitherGame.playerController,
+      body: Column(
+        children: [
+          // Game widget takes up most of the screen
+          Expanded(
+            child: GameWidget(
+              game: slitherGame,
+              overlayBuilderMap: {
+                'pauseMenu': (context, game) => PauseMenu(game: game as SlitherGame),
+                'gameOver': (context, game) => GameOverMenu(
+                  game: game as SlitherGame,
+                  playerController: slitherGame.playerController,
+                ),
+                'revive': (context, game) {
+                  Get.put(ReviveController(game: game as SlitherGame));
+                  return const ReviveOverlay();
+                },
+              },
+            ),
           ),
-          'revive': (context, game) {
-            Get.put(ReviveController(game: game as SlitherGame));
-            return const ReviveOverlay();
-          },
-        },
+          // Banner ad at the bottom
+          Obx(() {
+            final bannerWidget = _adService.getBannerAdWidget();
+            if (bannerWidget != null && _adService.isBannerAdReady.value) {
+              return Container(
+                color: Colors.black,
+                child: SafeArea(
+                  top: false,
+                  child: bannerWidget,
+                ),
+              );
+            } else {
+              // Show loading indicator or empty space while ad loads
+              return Container(
+                height: 50, // Standard banner height
+                color: Colors.black,
+                child: const Center(
+                  child: Text(
+                    'Loading ad...',
+                    style: TextStyle(color: Colors.white54, fontSize: 12),
+                  ),
+                ),
+              );
+            }
+          }),
+        ],
       ),
     );
   }

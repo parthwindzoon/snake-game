@@ -1,22 +1,60 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'dart:io';
 
 class AdService extends GetxService {
   RewardedAd? _rewardedAd;
+  BannerAd? _bannerAd;
   final RxBool isRewardedAdReady = false.obs;
+  final RxBool isBannerAdReady = false.obs;
 
   // Use test ad unit IDs for development
   static String get rewardedAdUnitId {
-    if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/5224354917';
-    } else if (Platform.isIOS) {
-      return 'ca-app-pub-3940256099942544/1712485313';
-    } else {
-      // For non-mobile platforms
-      return 'ca-app-pub-3940256099942544/5224354917';
-    }
+  //   if (kDebugMode) {
+  //   if (Platform.isAndroid) {
+  //     return 'ca-app-pub-3940256099942544/5224354917';
+  //   } else if (Platform.isIOS) {
+  //     return 'ca-app-pub-3940256099942544/1712485313';
+  //   } else {
+  //     // For non-mobile platforms
+  //     throw UnsupportedError("Unsupported Platform.");
+  //   }
+  // } else {
+      // REPLACE THESE WITH YOUR REAL AD UNIT IDs FOR PRODUCTION
+      if (Platform.isAndroid) {
+        return 'ca-app-pub-4288009468041362/7061187933';
+      } else if (Platform.isIOS) {
+        return 'ca-app-pub-4288009468041362/5444853933';
+      } else {
+        throw UnsupportedError("Unsupported Platform.");
+      }
+    // }
+  }
+
+  // Banner ad unit IDs
+  static String get bannerAdUnitId {
+    // Use test ads in debug mode, real ads in release mode
+    // if (kDebugMode) {
+    //   // Test banner ad unit IDs
+    //   if (Platform.isAndroid) {
+    //     return 'ca-app-pub-3940256099942544/6300978111';
+    //   } else if (Platform.isIOS) {
+    //     return 'ca-app-pub-3940256099942544/2934735716';
+    //   } else {
+    //     throw UnsupportedError("Unsupported Platform.");
+    //   }
+    // } else {
+      // REPLACE THESE WITH YOUR REAL AD UNIT IDs FOR PRODUCTION
+      if (Platform.isAndroid) {
+        return 'ca-app-pub-4288009468041362/1808861257';
+      } else if (Platform.isIOS) {
+        return 'ca-app-pub-4288009468041362/9000955560';
+      } else {
+        throw UnsupportedError("Unsupported Platform.");
+      }
+    // }
   }
 
   // Method to load a rewarded ad
@@ -38,7 +76,55 @@ class AdService extends GetxService {
     );
   }
 
-  // FIXED: Method to show the ad and handle the reward properly
+  // Method to load a banner ad
+  void loadBannerAd() {
+    _bannerAd = BannerAd(
+      adUnitId: bannerAdUnitId,
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          isBannerAdReady.value = true;
+          debugPrint('Banner ad loaded.');
+        },
+        onAdFailedToLoad: (ad, error) {
+          isBannerAdReady.value = false;
+          ad.dispose();
+          debugPrint('Failed to load a banner ad: ${error.message}');
+        },
+        onAdOpened: (ad) {
+          debugPrint('Banner ad opened.');
+        },
+        onAdClosed: (ad) {
+          debugPrint('Banner ad closed.');
+        },
+      ),
+    );
+
+    _bannerAd!.load();
+  }
+
+  // Method to get the banner ad widget
+  Widget? getBannerAdWidget() {
+    if (_bannerAd != null && isBannerAdReady.value) {
+      return Container(
+        alignment: Alignment.center,
+        width: _bannerAd!.size.width.toDouble(),
+        height: _bannerAd!.size.height.toDouble(),
+        child: AdWidget(ad: _bannerAd!),
+      );
+    }
+    return null;
+  }
+
+  // Method to dispose banner ad
+  void disposeBannerAd() {
+    _bannerAd?.dispose();
+    _bannerAd = null;
+    isBannerAdReady.value = false;
+  }
+
+
   void showRewardedAd({required VoidCallback onReward}) {
     if (!isRewardedAdReady.value || _rewardedAd == null) {
       debugPrint('Tried to show ad but it was not ready.');
@@ -79,5 +165,20 @@ class AdService extends GetxService {
       },
     );
     _rewardedAd = null;
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Load both types of ads on initialization
+    loadRewardedAd();
+    loadBannerAd();
+  }
+
+  @override
+  void onClose() {
+    _rewardedAd?.dispose();
+    disposeBannerAd();
+    super.onClose();
   }
 }

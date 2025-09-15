@@ -26,7 +26,13 @@ void main() async {
   await Get.putAsync<HapticService>(() async => HapticService());
 
 
-  Get.put(AdService()).loadRewardedAd();
+  // Initialize Ad Service and load both ad types
+  final adService = AdService();
+  Get.put(adService);
+
+  // Load both rewarded and banner ads on startup
+  adService.loadRewardedAd();
+  adService.loadBannerAd();
 
 
   SystemChrome.setPreferredOrientations([
@@ -90,4 +96,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
