@@ -12,16 +12,16 @@ class AdService extends GetxService {
 
   // Use test ad unit IDs for development
   static String get rewardedAdUnitId {
-  //   if (kDebugMode) {
-  //   if (Platform.isAndroid) {
-  //     return 'ca-app-pub-3940256099942544/5224354917';
-  //   } else if (Platform.isIOS) {
-  //     return 'ca-app-pub-3940256099942544/1712485313';
-  //   } else {
-  //     // For non-mobile platforms
-  //     throw UnsupportedError("Unsupported Platform.");
-  //   }
-  // } else {
+    if (kDebugMode) {
+    if (Platform.isAndroid) {
+      return 'ca-app-pub-3940256099942544/5224354917';
+    } else if (Platform.isIOS) {
+      return 'ca-app-pub-3940256099942544/1712485313';
+    } else {
+      // For non-mobile platforms
+      throw UnsupportedError("Unsupported Platform.");
+    }
+  } else {
       // REPLACE THESE WITH YOUR REAL AD UNIT IDs FOR PRODUCTION
       if (Platform.isAndroid) {
         return 'ca-app-pub-4288009468041362/7061187933';
@@ -30,22 +30,22 @@ class AdService extends GetxService {
       } else {
         throw UnsupportedError("Unsupported Platform.");
       }
-    // }
+    }
   }
 
   // Banner ad unit IDs
   static String get bannerAdUnitId {
     // Use test ads in debug mode, real ads in release mode
-    // if (kDebugMode) {
-    //   // Test banner ad unit IDs
-    //   if (Platform.isAndroid) {
-    //     return 'ca-app-pub-3940256099942544/6300978111';
-    //   } else if (Platform.isIOS) {
-    //     return 'ca-app-pub-3940256099942544/2934735716';
-    //   } else {
-    //     throw UnsupportedError("Unsupported Platform.");
-    //   }
-    // } else {
+    if (kDebugMode) {
+      // Test banner ad unit IDs
+      if (Platform.isAndroid) {
+        return 'ca-app-pub-3940256099942544/6300978111';
+      } else if (Platform.isIOS) {
+        return 'ca-app-pub-3940256099942544/2934735716';
+      } else {
+        throw UnsupportedError("Unsupported Platform.");
+      }
+    } else {
       // REPLACE THESE WITH YOUR REAL AD UNIT IDs FOR PRODUCTION
       if (Platform.isAndroid) {
         return 'ca-app-pub-4288009468041362/1808861257';
@@ -54,7 +54,7 @@ class AdService extends GetxService {
       } else {
         throw UnsupportedError("Unsupported Platform.");
       }
-    // }
+    }
   }
 
   // Method to load a rewarded ad
