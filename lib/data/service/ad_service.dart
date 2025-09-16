@@ -24,9 +24,11 @@ class AdService extends GetxService {
   } else {
       // REPLACE THESE WITH YOUR REAL AD UNIT IDs FOR PRODUCTION
       if (Platform.isAndroid) {
-        return 'ca-app-pub-4288009468041362/7061187933';
+        return 'ca-app-pub-3940256099942544/5224354917';
+        // return 'ca-app-pub-4288009468041362/7061187933';  //real
       } else if (Platform.isIOS) {
-        return 'ca-app-pub-4288009468041362/5444853933';
+        return 'ca-app-pub-3940256099942544/1712485313';
+        // return 'ca-app-pub-4288009468041362/5444853933';  //real
       } else {
         throw UnsupportedError("Unsupported Platform.");
       }
@@ -48,9 +50,11 @@ class AdService extends GetxService {
     } else {
       // REPLACE THESE WITH YOUR REAL AD UNIT IDs FOR PRODUCTION
       if (Platform.isAndroid) {
-        return 'ca-app-pub-4288009468041362/1808861257';
+        return 'ca-app-pub-3940256099942544/6300978111';
+        // return 'ca-app-pub-4288009468041362/1808861257';  //real
       } else if (Platform.isIOS) {
-        return 'ca-app-pub-4288009468041362/9000955560';
+        return 'ca-app-pub-3940256099942544/2934735716';
+        // return 'ca-app-pub-4288009468041362/9000955560';  //real
       } else {
         throw UnsupportedError("Unsupported Platform.");
       }

@@ -100,8 +100,8 @@ class SettingsService {
 
   // --- BACKGROUND SETTINGS ---
   Color get backgroundColor {
-    final hex = _box.read(_bgColorKey);
-    if (hex is int) return Color(hex);
+    // final hex = _box.read(_bgColorKey);
+    // if (hex is int) return Color(hex);
     return Colors.black;
   }
 
