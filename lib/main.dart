@@ -17,13 +17,6 @@ void main() async {
   // Ensure Flutter bindings are initialized before running the app.
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Register your test device ID
-  MobileAds.instance.updateRequestConfiguration(
-    RequestConfiguration(
-      testDeviceIds: ['9CAB7361F94601E150D4C88EA96B1EDD'],
-    ),
-  );
-
   await MobileAds.instance.initialize();
   // await Flame.device.fullScreen();
   await GetStorage.init();
