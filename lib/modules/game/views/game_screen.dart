@@ -178,7 +178,9 @@ class SlitherGame extends FlameGame with DragCallbacks {
       showGameOver();
     } else {
       snakeThatKilledPlayer = killer;
+      //TODO : after live add revive here
       overlays.add('revive');
+      // showGameOver();
     }
   }
 
@@ -254,6 +256,9 @@ class SlitherGame extends FlameGame with DragCallbacks {
   }
 
   // IMPROVED: Optimized collision detection with haptic feedback
+  // Replace the _checkPlayerVsAiCollisions method in game_screen.dart
+// This fixed version properly handles side collisions
+
   void _checkPlayerVsAiCollisions() {
     _collisionCallCount++;
 
@@ -271,7 +276,7 @@ class SlitherGame extends FlameGame with DragCallbacks {
     final playerBodyRadius = playerController.bodyRadius.value;
 
     _frameCount++;
-    if (_frameCount % 300 == 0) { // Reduced debug frequency
+    if (_frameCount % 300 == 0) {
       print(
         'Player collision check: AI snakes=${aiManager.aliveSnakeCount} '
             'player=(${playerHeadPos.x.toStringAsFixed(0)}, ${playerHeadPos.y.toStringAsFixed(0)}) '
@@ -279,7 +284,6 @@ class SlitherGame extends FlameGame with DragCallbacks {
       );
     }
 
-    // Only check visible AI snakes for performance
     final visibleRect = cameraComponent.visibleWorldRect.inflate(300);
     final List<AiSnakeData> snakesToKill = [];
 
@@ -290,29 +294,74 @@ class SlitherGame extends FlameGame with DragCallbacks {
 
       checkedSnakes++;
 
-      // Player head vs AI head collision
+      // Player head vs AI head collision - FIXED FOR SIDE COLLISIONS
       final headToHeadDistance = playerHeadPos.distanceTo(snake.position);
       final requiredHeadDistance = playerHeadRadius + snake.headRadius;
 
       if (headToHeadDistance <= requiredHeadDistance) {
-        if (playerHeadRadius > snake.headRadius + 1.0) {
-          // Player wins - ADD HAPTIC FEEDBACK
+        // Calculate direction of collision
+        final collisionVector = snake.position - playerHeadPos;
+        final playerDirection = playerController.currentDir;
+        final aiDirection = Vector2(cos(snake.angle), sin(snake.angle));
+
+        // Calculate dot product to determine if it's a head-on or side collision
+        // Dot product close to -1 means head-on (opposite directions)
+        // Dot product close to 0 means perpendicular (side collision)
+        final dotProduct = playerDirection.dot(aiDirection);
+
+        print('H2H Collision detected:');
+        print('  Distance: ${headToHeadDistance.toStringAsFixed(2)} <= ${requiredHeadDistance.toStringAsFixed(2)}');
+        print('  Player radius: ${playerHeadRadius.toStringAsFixed(1)}, AI radius: ${snake.headRadius.toStringAsFixed(1)}');
+        print('  Dot product: ${dotProduct.toStringAsFixed(2)} (head-on < -0.5, side > -0.5)');
+
+        // Determine collision type and winner
+        final isHeadOnCollision = dotProduct < -0.3; // Heading towards each other
+        final isSideCollision = dotProduct.abs() < 0.7; // Perpendicular approach
+
+        if (isSideCollision) {
+          // SIDE COLLISION - AI snake always dies when hitting from the side
+          print('  SIDE COLLISION: AI snake dies');
           _hapticService.kill();
-          print('Player wins H2H: $playerHeadRadius vs ${snake.headRadius}');
           snakesToKill.add(snake);
-          player.onAiSnakeKilled(); // Trigger haptic in player component
-        } else if (playerHeadRadius < snake.headRadius - 1.0) {
-          // AI wins - DEATH HAPTIC is handled in player.die()
-          print('AI wins H2H: $playerHeadRadius vs ${snake.headRadius}');
-          handlePlayerDeath(snake);
-          return;
+          player.onAiSnakeKilled();
+        } else if (isHeadOnCollision) {
+          // HEAD-ON COLLISION - size determines winner
+          if (playerHeadRadius > snake.headRadius + 1.0) {
+            print('  HEAD-ON: Player wins (bigger)');
+            _hapticService.kill();
+            snakesToKill.add(snake);
+            player.onAiSnakeKilled();
+          } else if (playerHeadRadius < snake.headRadius - 1.0) {
+            print('  HEAD-ON: AI wins (bigger)');
+            handlePlayerDeath(snake);
+            return;
+          } else {
+            // Equal size head-on collision
+            print('  HEAD-ON: Equal size - both die');
+            _hapticService.collision();
+            snakesToKill.add(snake);
+            handlePlayerDeath(snake);
+            return;
+          }
         } else {
-          // Equal size - both die
-          _hapticService.collision(); // Different haptic for mutual destruction
-          print('Equal H2H — both die at r=$playerHeadRadius');
-          snakesToKill.add(snake);
-          handlePlayerDeath(snake);
-          return;
+          // Ambiguous collision - favor the larger snake
+          if (playerHeadRadius > snake.headRadius + 2.0) {
+            print('  AMBIGUOUS: Player wins (much bigger)');
+            _hapticService.kill();
+            snakesToKill.add(snake);
+            player.onAiSnakeKilled();
+          } else if (playerHeadRadius < snake.headRadius - 2.0) {
+            print('  AMBIGUOUS: AI wins (much bigger)');
+            handlePlayerDeath(snake);
+            return;
+          } else {
+            // Close in size - both die
+            print('  AMBIGUOUS: Similar size - both die');
+            _hapticService.collision();
+            snakesToKill.add(snake);
+            handlePlayerDeath(snake);
+            return;
+          }
         }
         continue;
       }
@@ -325,7 +374,6 @@ class SlitherGame extends FlameGame with DragCallbacks {
 
         if (bodyDistance <= requiredBodyDistance) {
           print('Player head hit AI body[$i]: d=${bodyDistance.toStringAsFixed(1)} <= ${requiredBodyDistance.toStringAsFixed(1)}');
-          // DEATH HAPTIC is handled in player.die()
           handlePlayerDeath(snake);
           return;
         }
@@ -338,21 +386,20 @@ class SlitherGame extends FlameGame with DragCallbacks {
         final requiredBodyDistance = snake.headRadius + playerBodyRadius;
 
         if (bodyDistance <= requiredBodyDistance) {
-          // Player wins - ADD HAPTIC FEEDBACK
           _hapticService.kill();
           print('AI head hit player body[$i]: d=${bodyDistance.toStringAsFixed(1)} <= ${requiredBodyDistance.toStringAsFixed(1)} (AI dies)');
           snakesToKill.add(snake);
-          player.onAiSnakeKilled(); // Trigger haptic in player component
+          player.onAiSnakeKilled();
           break;
         }
       }
     }
 
-    // Process killed snakes - now they die with animation
+    // Process killed snakes
     for (final snake in snakesToKill) {
       playerController.kills.value++;
-      snake.isDead = true; // This will trigger death animation in AiManager
-      aiManager.spawnNewSnake(); // Spawn replacement
+      snake.isDead = true;
+      aiManager.spawnNewSnake();
     }
 
     if (_frameCount % 300 == 0 && checkedSnakes > 0) {
@@ -409,6 +456,7 @@ class _GameScreenState extends State<GameScreen> {
               },
             ),
           ),
+          //TODO : add again banner ad after game live
           // Banner ad at the bottom
           Obx(() {
             final bannerWidget = _adService.getBannerAdWidget();

@@ -1,4 +1,4 @@
-package com.example.newer_version_snake
+package com.learnberry.colorcobra
 
 import io.flutter.embedding.android.FlutterActivity
 

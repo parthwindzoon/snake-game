@@ -162,7 +162,9 @@ class PlayerComponent extends PositionComponent with HasGameRef<SlitherGame> {
     if (currentScore > _scoreService.getHighScore()) {
       _scoreService.saveHighScore(currentScore);
     }
-    game.overlays.add('revive');
+    // TODO : add revive back after live
+    // game.overlays.add('revive');
+    game.overlays.add('gameOver');
     game.pauseEngine();
   }
 
