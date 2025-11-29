@@ -66,7 +66,7 @@ class CustomizationScreen extends GetView<CustomizationController> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       onPressed: controller.saveChanges,
-                      child: const Text('Save & Exit', style: TextStyle(fontSize: 18)),
+                      child: const Text('Save & Exit', style: TextStyle(fontSize: 18, color: Colors.white)),
                     ),
                   ),
                 ],

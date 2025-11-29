@@ -3,13 +3,14 @@ import 'dart:math' as math;
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:newer_version_snake/modules/game/components/ai/learning_ai_manager.dart';
 
 import '../../views/game_screen.dart';
 import 'ai_snake_data.dart';
 import 'ai_manager.dart';
 
 class AiPainter extends Component with HasGameReference<SlitherGame> {
-  final AiManager aiManager;
+  final LearningAiManager aiManager;
 
   AiPainter({required this.aiManager});
 

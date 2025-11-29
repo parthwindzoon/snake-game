@@ -10,6 +10,8 @@ class SettingsOverlay extends GetView<SettingsController> {
   @override
   Widget build(BuildContext context) {
     final AudioService audioService = Get.find<AudioService>();
+    final size = MediaQuery.of(context).size;
+    final isTablet = size.shortestSide > 600;
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.all(10),
@@ -28,12 +30,12 @@ class SettingsOverlay extends GetView<SettingsController> {
           children: [
             Column(
               children: [
-                const SizedBox(height: 73),
+                SizedBox(height: isTablet ? 50 : 73),
                 const Text(
                   'SETTINGS',
                   style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 2),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: isTablet ? 65: 40),
                 _buildSettingRow(
                   iconAsset: 'assets/images/SFX.png',
                   label: 'Sound',
@@ -59,11 +61,11 @@ class SettingsOverlay extends GetView<SettingsController> {
               ],
             ),
             Positioned(
-              top: 50,
-              right: 35,
+              top: isTablet ? 25 : 50,
+              right: isTablet ? 200: 35,
               child: GestureDetector(
                 onTap: () => {audioService.playButtonClick(),Get.back()},
-                child: Image.asset('assets/images/Close Btn.png', width: 35),
+                child: Image.asset('assets/images/Close Btn.png', width: isTablet ? 45 : 35),
               ),
             ),
           ],

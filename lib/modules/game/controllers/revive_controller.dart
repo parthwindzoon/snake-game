@@ -11,7 +11,8 @@ class ReviveController extends GetxController with GetSingleTickerProviderStateM
   final SlitherGame game;
   ReviveController({required this.game});
 
-  final AdService _adService = Get.find<AdService>();
+  // TODO: After live uncomment this
+  // final AdService _adService = Get.find<AdService>();
 
   late final Timer _timer;
   late final AnimationController animationController;
@@ -50,12 +51,12 @@ class ReviveController extends GetxController with GetSingleTickerProviderStateM
     _timer.cancel();
     animationController.stop();
 
-
-    _adService.showRewardedAd(
-      onReward: () {
-          game.revivePlayer();
-      },
-    );
+    //TODO: After live uncomment this
+    // _adService.showRewardedAd(
+    //   onReward: () {
+    //       game.revivePlayer();
+    //   },
+    // );
   }
 
   // FIXED: Handle revive failure gracefully

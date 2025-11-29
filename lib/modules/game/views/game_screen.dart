@@ -8,6 +8,7 @@ import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Add this for haptics
 import 'package:get/get.dart';
+import 'package:newer_version_snake/modules/game/components/ai/learning_ai_manager.dart';
 import 'package:newer_version_snake/modules/game/views/pause_menu.dart';
 import 'package:newer_version_snake/modules/game/views/revive_overlay.dart';
 import '../../../data/service/haptic_service.dart';
@@ -32,7 +33,7 @@ class SlitherGame extends FlameGame with DragCallbacks {
   final HapticService _hapticService = Get.find<HapticService>();
 
   late final World world;
-  late final AiManager aiManager;
+  late final LearningAiManager aiManager;
   late final PlayerComponent player;
   late final CameraComponent cameraComponent;
   late final AiPainter aiPainter;
@@ -80,10 +81,10 @@ class SlitherGame extends FlameGame with DragCallbacks {
     player = PlayerComponent(foodManager: foodManager)..position = Vector2.zero();
 
     // UPDATED: Initialize AI manager with reduced snake count (20 instead of 30)
-    aiManager = AiManager(
+    aiManager = LearningAiManager(
       foodManager: foodManager,
       player: player,
-      numberOfSnakes: 20, // Reduced from 30
+      numberOfSnakes: 15, // Reduced from 30
     );
 
     final foodPainter = FoodPainter(
@@ -178,9 +179,9 @@ class SlitherGame extends FlameGame with DragCallbacks {
       showGameOver();
     } else {
       snakeThatKilledPlayer = killer;
-      //TODO : after live add revive here
-      overlays.add('revive');
-      // showGameOver();
+      //TODO : after live add revive here and remove gameover
+      // overlays.add('revive');
+      showGameOver();
     }
   }
 
@@ -417,20 +418,23 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> {
   late final SlitherGame slitherGame;
-  final AdService _adService = Get.find<AdService>();
+  //TODO AFTER LIVE ADD ADS uncomment this
+  // final AdService _adService = Get.find<AdService>();
 
   @override
   void initState() {
     super.initState();
     slitherGame = SlitherGame();
     // Load banner ad when game screen initializes
-    _adService.loadBannerAd();
+    //TODO: after live uncomment this
+    // _adService.loadBannerAd();
   }
 
   @override
   void dispose() {
     // Dispose banner ad when leaving game screen
-    _adService.disposeBannerAd();
+    //TODO: after live uncomment this
+    // _adService.disposeBannerAd();
     super.dispose();
   }
 
@@ -458,30 +462,30 @@ class _GameScreenState extends State<GameScreen> {
           ),
           //TODO : add again banner ad after game live
           // Banner ad at the bottom
-          Obx(() {
-            final bannerWidget = _adService.getBannerAdWidget();
-            if (bannerWidget != null && _adService.isBannerAdReady.value) {
-              return Container(
-                color: Colors.black,
-                child: SafeArea(
-                  top: false,
-                  child: bannerWidget,
-                ),
-              );
-            } else {
-              // Show loading indicator or empty space while ad loads
-              return Container(
-                // height: 50, // Standard banner height
-                // color: Colors.black,
-                // child: const Center(
-                //   child: Text(
-                //     'Loading ad...',
-                //     style: TextStyle(color: Colors.white54, fontSize: 12),
-                //   ),
-                // ),
-              );
-            }
-          }),
+          // Obx(() {
+          //   final bannerWidget = _adService.getBannerAdWidget();
+          //   if (bannerWidget != null && _adService.isBannerAdReady.value) {
+          //     return Container(
+          //       color: Colors.black,
+          //       child: SafeArea(
+          //         top: false,
+          //         child: bannerWidget,
+          //       ),
+          //     );
+          //   } else {
+          //     // Show loading indicator or empty space while ad loads
+          //     return Container(
+          //       // height: 50, // Standard banner height
+          //       // color: Colors.black,
+          //       // child: const Center(
+          //       //   child: Text(
+          //       //     'Loading ad...',
+          //       //     style: TextStyle(color: Colors.white54, fontSize: 12),
+          //       //   ),
+          //       // ),
+          //     );
+          //   }
+          // }),
         ],
       ),
     );
