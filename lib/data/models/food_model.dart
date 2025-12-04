@@ -85,7 +85,7 @@ class FoodModel {
     scale = easedProgress;
   }
 
-  // Update the consumption animation
+  // Update the consumption animation - FIXED WITH PROPER CLAMPING
   void _updateConsumption(double dt) {
     if (targetPosition == null) return;
 
@@ -104,13 +104,17 @@ class FoodModel {
     // Animate position towards target (manual lerp implementation)
     position = _lerpVector2(originalPosition, targetPosition!, easedProgress);
 
-    // Animate scale (shrink as it gets consumed)
-    scale = 1.0 - (easedProgress * 0.6); // Shrink to 40% of original size
+    // FIXED: Animate scale (shrink as it gets consumed) - CLAMPED to prevent negative values
+    scale = (1.0 - (easedProgress * 0.6)).clamp(0.0, 1.0);
 
-    // Animate opacity (fade out near the end)
+    // FIXED: Animate opacity (fade out near the end) - CLAMPED to valid range [0.0, 1.0]
     if (easedProgress > 0.7) {
       double fadeProgress = (easedProgress - 0.7) / 0.3;
-      opacity = 1.0 - fadeProgress;
+      // This ensures opacity never goes below 0.0 or above 1.0
+      opacity = (1.0 - fadeProgress).clamp(0.0, 1.0);
+    } else {
+      // Ensure opacity is exactly 1.0 during the first 70% of animation
+      opacity = 1.0;
     }
   }
 

@@ -133,7 +133,7 @@ class SlitherGame extends FlameGame with DragCallbacks {
     // Initialize food immediately when the game starts
     foodManager.initialize(player.position);
     _gameInitialized = true;
-    print('Game initialized with food spawned at start');
+    // print('Game initialized with food spawned at start');
   }
 
   void revivePlayer() {
@@ -141,7 +141,7 @@ class SlitherGame extends FlameGame with DragCallbacks {
 
     if (snakeThatKilledPlayer != null && !snakeThatKilledPlayer!.isDead) {
       // Kill the AI snake that killed the player with special revenge death
-      print('Revive: Executing revenge kill on AI snake');
+      // print('Revive: Executing revenge kill on AI snake');
 
       // Use special revenge kill method for bonus food and effects
       aiManager.killSnakeAsRevenge(snakeThatKilledPlayer!);
@@ -156,7 +156,7 @@ class SlitherGame extends FlameGame with DragCallbacks {
       Future.delayed(const Duration(seconds: 2), () {
         if (aiManager.isMounted) {
           aiManager.spawnNewSnake();
-          print('Revive: Spawned replacement AI snake');
+          // print('Revive: Spawned replacement AI snake');
         }
       });
 
@@ -168,7 +168,7 @@ class SlitherGame extends FlameGame with DragCallbacks {
     resumeEngine();
 
     // Optional: Show a message to the player
-    print('🎮 PLAYER REVIVED! Revenge executed! 🎮');
+    // print('🎮 PLAYER REVIVED! Revenge executed! 🎮');
   }
 
   void handlePlayerDeath(AiSnakeData? killer) {
@@ -216,7 +216,7 @@ class SlitherGame extends FlameGame with DragCallbacks {
     if (_updateCount % 3600 == 0) {
       final aiStats = 'AI: ${aiManager.aliveSnakeCount}/${aiManager.totalSnakeCount}';
       final foodStats = 'Food: ${foodManager.foodList.length}';
-      print('Game update running. Update: $_updateCount | $aiStats | $foodStats');
+      // print('Game update running. Update: $_updateCount | $aiStats | $foodStats');
     }
 
     // Enhanced collision detection - Player vs AI only
@@ -265,7 +265,7 @@ class SlitherGame extends FlameGame with DragCallbacks {
 
     if (!aiManager.isMounted) {
       if (_collisionCallCount % 120 == 0) {
-        print('AiManager not mounted yet; skipping collisions.');
+        // print('AiManager not mounted yet; skipping collisions.');
       }
       return;
     }
@@ -278,11 +278,11 @@ class SlitherGame extends FlameGame with DragCallbacks {
 
     _frameCount++;
     if (_frameCount % 300 == 0) {
-      print(
-        'Player collision check: AI snakes=${aiManager.aliveSnakeCount} '
-            'player=(${playerHeadPos.x.toStringAsFixed(0)}, ${playerHeadPos.y.toStringAsFixed(0)}) '
-            'rHead=${playerHeadRadius.toStringAsFixed(1)}',
-      );
+      // print(
+      //   'Player collision check: AI snakes=${aiManager.aliveSnakeCount} '
+      //       'player=(${playerHeadPos.x.toStringAsFixed(0)}, ${playerHeadPos.y.toStringAsFixed(0)}) '
+      //       'rHead=${playerHeadRadius.toStringAsFixed(1)}',
+      // );
     }
 
     final visibleRect = cameraComponent.visibleWorldRect.inflate(300);
@@ -310,10 +310,10 @@ class SlitherGame extends FlameGame with DragCallbacks {
         // Dot product close to 0 means perpendicular (side collision)
         final dotProduct = playerDirection.dot(aiDirection);
 
-        print('H2H Collision detected:');
-        print('  Distance: ${headToHeadDistance.toStringAsFixed(2)} <= ${requiredHeadDistance.toStringAsFixed(2)}');
-        print('  Player radius: ${playerHeadRadius.toStringAsFixed(1)}, AI radius: ${snake.headRadius.toStringAsFixed(1)}');
-        print('  Dot product: ${dotProduct.toStringAsFixed(2)} (head-on < -0.5, side > -0.5)');
+        // print('H2H Collision detected:');
+        // print('  Distance: ${headToHeadDistance.toStringAsFixed(2)} <= ${requiredHeadDistance.toStringAsFixed(2)}');
+        // print('  Player radius: ${playerHeadRadius.toStringAsFixed(1)}, AI radius: ${snake.headRadius.toStringAsFixed(1)}');
+        // print('  Dot product: ${dotProduct.toStringAsFixed(2)} (head-on < -0.5, side > -0.5)');
 
         // Determine collision type and winner
         final isHeadOnCollision = dotProduct < -0.3; // Heading towards each other
@@ -321,24 +321,24 @@ class SlitherGame extends FlameGame with DragCallbacks {
 
         if (isSideCollision) {
           // SIDE COLLISION - AI snake always dies when hitting from the side
-          print('  SIDE COLLISION: AI snake dies');
+          // print('  SIDE COLLISION: AI snake dies');
           _hapticService.kill();
           snakesToKill.add(snake);
           player.onAiSnakeKilled();
         } else if (isHeadOnCollision) {
           // HEAD-ON COLLISION - size determines winner
           if (playerHeadRadius > snake.headRadius + 1.0) {
-            print('  HEAD-ON: Player wins (bigger)');
+            // print('  HEAD-ON: Player wins (bigger)');
             _hapticService.kill();
             snakesToKill.add(snake);
             player.onAiSnakeKilled();
           } else if (playerHeadRadius < snake.headRadius - 1.0) {
-            print('  HEAD-ON: AI wins (bigger)');
+            // print('  HEAD-ON: AI wins (bigger)');
             handlePlayerDeath(snake);
             return;
           } else {
             // Equal size head-on collision
-            print('  HEAD-ON: Equal size - both die');
+            // print('  HEAD-ON: Equal size - both die');
             _hapticService.collision();
             snakesToKill.add(snake);
             handlePlayerDeath(snake);
@@ -347,17 +347,17 @@ class SlitherGame extends FlameGame with DragCallbacks {
         } else {
           // Ambiguous collision - favor the larger snake
           if (playerHeadRadius > snake.headRadius + 2.0) {
-            print('  AMBIGUOUS: Player wins (much bigger)');
+            // print('  AMBIGUOUS: Player wins (much bigger)');
             _hapticService.kill();
             snakesToKill.add(snake);
             player.onAiSnakeKilled();
           } else if (playerHeadRadius < snake.headRadius - 2.0) {
-            print('  AMBIGUOUS: AI wins (much bigger)');
+            // print('  AMBIGUOUS: AI wins (much bigger)');
             handlePlayerDeath(snake);
             return;
           } else {
             // Close in size - both die
-            print('  AMBIGUOUS: Similar size - both die');
+            // print('  AMBIGUOUS: Similar size - both die');
             _hapticService.collision();
             snakesToKill.add(snake);
             handlePlayerDeath(snake);
@@ -374,7 +374,7 @@ class SlitherGame extends FlameGame with DragCallbacks {
         final requiredBodyDistance = playerHeadRadius + snake.bodyRadius;
 
         if (bodyDistance <= requiredBodyDistance) {
-          print('Player head hit AI body[$i]: d=${bodyDistance.toStringAsFixed(1)} <= ${requiredBodyDistance.toStringAsFixed(1)}');
+          // print('Player head hit AI body[$i]: d=${bodyDistance.toStringAsFixed(1)} <= ${requiredBodyDistance.toStringAsFixed(1)}');
           handlePlayerDeath(snake);
           return;
         }
@@ -388,7 +388,7 @@ class SlitherGame extends FlameGame with DragCallbacks {
 
         if (bodyDistance <= requiredBodyDistance) {
           _hapticService.kill();
-          print('AI head hit player body[$i]: d=${bodyDistance.toStringAsFixed(1)} <= ${requiredBodyDistance.toStringAsFixed(1)} (AI dies)');
+          // print('AI head hit player body[$i]: d=${bodyDistance.toStringAsFixed(1)} <= ${requiredBodyDistance.toStringAsFixed(1)} (AI dies)');
           snakesToKill.add(snake);
           player.onAiSnakeKilled();
           break;
@@ -404,7 +404,7 @@ class SlitherGame extends FlameGame with DragCallbacks {
     }
 
     if (_frameCount % 300 == 0 && checkedSnakes > 0) {
-      print('Checked $checkedSnakes visible AI snakes for player collisions');
+      // print('Checked $checkedSnakes visible AI snakes for player collisions');
     }
   }
 }
