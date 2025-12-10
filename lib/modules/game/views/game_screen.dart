@@ -181,7 +181,7 @@ class SlitherGame extends FlameGame with DragCallbacks {
       snakeThatKilledPlayer = killer;
       //TODO : after live add revive here and remove gameover
       overlays.add('revive');
-      showGameOver();
+      // showGameOver();
     }
   }
 
