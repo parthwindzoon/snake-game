@@ -180,7 +180,7 @@ class SlitherGame extends FlameGame with DragCallbacks {
     } else {
       snakeThatKilledPlayer = killer;
       //TODO : after live add revive here and remove gameover
-      // overlays.add('revive');
+      overlays.add('revive');
       showGameOver();
     }
   }
@@ -419,7 +419,7 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   late final SlitherGame slitherGame;
   //TODO AFTER LIVE ADD ADS uncomment this
-  // final AdService _adService = Get.find<AdService>();
+  final AdService _adService = Get.find<AdService>();
 
   @override
   void initState() {
@@ -427,14 +427,14 @@ class _GameScreenState extends State<GameScreen> {
     slitherGame = SlitherGame();
     // Load banner ad when game screen initializes
     //TODO: after live uncomment this
-    // _adService.loadBannerAd();
+    _adService.loadBannerAd();
   }
 
   @override
   void dispose() {
     // Dispose banner ad when leaving game screen
     //TODO: after live uncomment this
-    // _adService.disposeBannerAd();
+    _adService.disposeBannerAd();
     super.dispose();
   }
 
@@ -462,30 +462,30 @@ class _GameScreenState extends State<GameScreen> {
           ),
           //TODO : add again banner ad after game live
           // Banner ad at the bottom
-          // Obx(() {
-          //   final bannerWidget = _adService.getBannerAdWidget();
-          //   if (bannerWidget != null && _adService.isBannerAdReady.value) {
-          //     return Container(
-          //       color: Colors.black,
-          //       child: SafeArea(
-          //         top: false,
-          //         child: bannerWidget,
-          //       ),
-          //     );
-          //   } else {
-          //     // Show loading indicator or empty space while ad loads
-          //     return Container(
-          //       // height: 50, // Standard banner height
-          //       // color: Colors.black,
-          //       // child: const Center(
-          //       //   child: Text(
-          //       //     'Loading ad...',
-          //       //     style: TextStyle(color: Colors.white54, fontSize: 12),
-          //       //   ),
-          //       // ),
-          //     );
-          //   }
-          // }),
+          Obx(() {
+            final bannerWidget = _adService.getBannerAdWidget();
+            if (bannerWidget != null && _adService.isBannerAdReady.value) {
+              return Container(
+                color: Colors.black,
+                child: SafeArea(
+                  top: false,
+                  child: bannerWidget,
+                ),
+              );
+            } else {
+              // Show loading indicator or empty space while ad loads
+              return Container(
+                // height: 50, // Standard banner height
+                // color: Colors.black,
+                // child: const Center(
+                //   child: Text(
+                //     'Loading ad...',
+                //     style: TextStyle(color: Colors.white54, fontSize: 12),
+                //   ),
+                // ),
+              );
+            }
+          }),
         ],
       ),
     );

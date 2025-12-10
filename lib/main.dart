@@ -18,8 +18,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   //TODO: after live uncomment this
-  // await MobileAds.instance.initialize();
-  // await Flame.device.fullScreen();
+  await MobileAds.instance.initialize();
+  await Flame.device.fullScreen();
   await GetStorage.init();
   await SettingsService().init();
 
@@ -30,12 +30,12 @@ void main() async {
 
   // Initialize Ad Service and load both ad types
   //TODO : After live uncomment this 4 lines
-  // final adService = AdService();
-  // Get.put(adService);
+  final adService = AdService();
+  Get.put(adService);
 
   // Load both rewarded and banner ads on startup
-  // adService.loadRewardedAd();
-  // adService.loadBannerAd();
+  adService.loadRewardedAd();
+  adService.loadBannerAd();
 
 
   SystemChrome.setPreferredOrientations([
