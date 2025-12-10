@@ -19,6 +19,9 @@ class ReviveController extends GetxController with GetSingleTickerProviderStateM
 
   final RxInt countdown = 10.obs;
 
+  // NEW: Track if ad unavailable popup is showing
+  final RxBool showingAdUnavailablePopup = false.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -46,7 +49,72 @@ class ReviveController extends GetxController with GetSingleTickerProviderStateM
     super.onClose();
   }
 
-  // FIXED: Proper revive handling
+  // NEW: Show ad unavailable popup
+  void _showAdUnavailablePopup() {
+    if (showingAdUnavailablePopup.value) return; // Prevent multiple popups
+
+    showingAdUnavailablePopup.value = true;
+
+    Get.dialog(
+      WillPopScope(
+        onWillPop: () async => false, // Prevent dismissal by back button
+        child: Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E1E1E),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.redAccent, width: 3),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.error_outline,
+                  color: Colors.redAccent,
+                  size: 60,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Ads unavailable currently!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Please check your internet connection',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
+
+    // Auto-close after 3 seconds
+    Future.delayed(const Duration(seconds: 3), () {
+      if (Get.isDialogOpen ?? false) {
+        Get.back(); // Close the dialog
+      }
+      showingAdUnavailablePopup.value = false;
+
+      // Proceed to game over since revive failed
+      onNext();
+    });
+  }
+
+  // FIXED: Proper revive handling with ad unavailable fallback
   void onRevive() {
     _timer.cancel();
     animationController.stop();
@@ -54,7 +122,11 @@ class ReviveController extends GetxController with GetSingleTickerProviderStateM
     //TODO: After live uncomment this
     _adService.showRewardedAd(
       onReward: () {
-          game.revivePlayer();
+        game.revivePlayer();
+      },
+      onAdUnavailable: () {
+        // NEW: Show popup when ad is unavailable
+        _showAdUnavailablePopup();
       },
     );
   }

@@ -416,6 +416,8 @@ class GameScreen extends StatefulWidget {
   State<GameScreen> createState() => _GameScreenState();
 }
 
+// Add this to the bottom of game_screen.dart, replacing the existing banner ad section
+
 class _GameScreenState extends State<GameScreen> {
   late final SlitherGame slitherGame;
   //TODO AFTER LIVE ADD ADS uncomment this
@@ -461,9 +463,11 @@ class _GameScreenState extends State<GameScreen> {
             ),
           ),
           //TODO : add again banner ad after game live
-          // Banner ad at the bottom
+          // Banner ad at the bottom with fallback
           Obx(() {
             final bannerWidget = _adService.getBannerAdWidget();
+
+            // If ad is ready, show it
             if (bannerWidget != null && _adService.isBannerAdReady.value) {
               return Container(
                 color: Colors.black,
@@ -472,17 +476,28 @@ class _GameScreenState extends State<GameScreen> {
                   child: bannerWidget,
                 ),
               );
-            } else {
-              // Show loading indicator or empty space while ad loads
+            }
+            // If ad failed to load, show nothing (no space)
+            else if (_adService.bannerAdFailed.value) {
+              return const SizedBox.shrink(); // No space when ad fails
+            }
+            // If ad is loading, show subtle loading indicator
+            else {
               return Container(
-                // height: 50, // Standard banner height
-                // color: Colors.black,
-                // child: const Center(
-                //   child: Text(
-                //     'Loading ad...',
-                //     style: TextStyle(color: Colors.white54, fontSize: 12),
-                //   ),
-                // ),
+                height: 50, // Standard banner height
+                color: Colors.black,
+                child: Center(
+                  child: SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                  ),
+                ),
               );
             }
           }),

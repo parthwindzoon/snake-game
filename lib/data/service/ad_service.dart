@@ -10,18 +10,21 @@ class AdService extends GetxService {
   final RxBool isRewardedAdReady = false.obs;
   final RxBool isBannerAdReady = false.obs;
 
+  // NEW: Track if banner ad failed to load
+  final RxBool bannerAdFailed = false.obs;
+
   // Use test ad unit IDs for development
   static String get rewardedAdUnitId {
     if (kDebugMode) {
-    if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/5224354917'; //test
-    } else if (Platform.isIOS) {
-      return 'ca-app-pub-3940256099942544/1712485313'; //test
+      if (Platform.isAndroid) {
+        return 'ca-app-pub-3940256099942544/5224354917'; //test
+      } else if (Platform.isIOS) {
+        return 'ca-app-pub-3940256099942544/1712485313'; //test
+      } else {
+        // For non-mobile platforms
+        throw UnsupportedError("Unsupported Platform.");
+      }
     } else {
-      // For non-mobile platforms
-      throw UnsupportedError("Unsupported Platform.");
-    }
-  } else {
       // REPLACE THESE WITH YOUR REAL AD UNIT IDs FOR PRODUCTION
       if (Platform.isAndroid) {
         // return 'ca-app-pub-3940256099942544/5224354917';
@@ -83,6 +86,9 @@ class AdService extends GetxService {
 
   // Method to load a banner ad
   void loadBannerAd() {
+    // Reset the failed flag when attempting to load
+    bannerAdFailed.value = false;
+
     _bannerAd = BannerAd(
       adUnitId: bannerAdUnitId,
       size: AdSize.banner,
@@ -90,10 +96,12 @@ class AdService extends GetxService {
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           isBannerAdReady.value = true;
+          bannerAdFailed.value = false;
           debugPrint('Banner ad loaded.');
         },
         onAdFailedToLoad: (ad, error) {
           isBannerAdReady.value = false;
+          bannerAdFailed.value = true; // NEW: Mark as failed
           ad.dispose();
           debugPrint('Failed to load a banner ad: ${error.message}');
         },
@@ -130,9 +138,13 @@ class AdService extends GetxService {
   }
 
 
-  void showRewardedAd({required VoidCallback onReward}) {
+  void showRewardedAd({required VoidCallback onReward, VoidCallback? onAdUnavailable}) {
     if (!isRewardedAdReady.value || _rewardedAd == null) {
       debugPrint('Tried to show ad but it was not ready.');
+      // NEW: Call the unavailable callback
+      if (onAdUnavailable != null) {
+        onAdUnavailable();
+      }
       loadRewardedAd(); // Try to load another one for next time
       return;
     }
@@ -157,6 +169,10 @@ class AdService extends GetxService {
         ad.dispose();
         isRewardedAdReady.value = false;
         debugPrint('Failed to show the ad: $error');
+        // NEW: Call unavailable callback on show failure
+        if (onAdUnavailable != null) {
+          onAdUnavailable();
+        }
         loadRewardedAd(); // Pre-load the next ad
       },
     );
