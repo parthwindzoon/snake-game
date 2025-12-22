@@ -36,10 +36,10 @@ class HomeController extends GetxController {
     if (savedUsername != null && savedUsername.toString().isNotEmpty) {
       nicknameController.text = savedUsername.toString();
       currentUsernameRx.value = savedUsername.toString(); // Update reactive variable
-      print('✅ Loaded saved username: $savedUsername');
+      // print('✅ Loaded saved username: $savedUsername');
     } else {
       currentUsernameRx.value = ''; // Update reactive variable
-      print('📝 No saved username found');
+      // print('📝 No saved username found');
     }
   }
 
@@ -56,10 +56,10 @@ class HomeController extends GetxController {
   void _saveUsername(String username) {
     if (username.isNotEmpty) {
       _box.write(_usernameKey, username);
-      print('💾 Username saved: $username');
+      // print('💾 Username saved: $username');
     } else {
       _box.remove(_usernameKey);
-      print('🗑️ Username removed from storage');
+      // print('🗑️ Username removed from storage');
     }
   }
 

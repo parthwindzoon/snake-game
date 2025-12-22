@@ -114,7 +114,7 @@ class AiSnakeData {
     headRadius = newRadius.clamp(minRadius, maxRadius);
     bodyRadius = headRadius - 1.0;
 
-    print('AI Snake grew: foodScore=$foodScore, segments=$segmentCount, radius=${headRadius.toStringAsFixed(1)}');
+    // print('AI Snake grew: foodScore=$foodScore, segments=$segmentCount, radius=${headRadius.toStringAsFixed(1)}');
   }
 
   // NEW: Get current food score for debugging

@@ -6,7 +6,6 @@ import 'package:flame/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Add this for haptics
 import 'package:get/get.dart';
 import 'package:newer_version_snake/modules/game/components/ai/learning_ai_manager.dart';
 import 'package:newer_version_snake/modules/game/views/pause_menu.dart';
@@ -120,7 +119,7 @@ class SlitherGame extends FlameGame with DragCallbacks {
     );
     cameraComponent.setBounds(cameraBounds);
 
-    final boostButton = BoostButton(position: Vector2(50, size.y - 120));
+    final boostButton = BoostButton(position: Vector2(50, size.y - 180));
     final pauseButton = PauseButton(position: Vector2(size.x - 70, 50));
     // final minimap = Minimap(player: player, aiManager: aiManager);
     cameraComponent.viewport.addAll([boostButton, pauseButton/*, minimap*/]);
@@ -443,65 +442,69 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          // Game widget takes up most of the screen
-          Expanded(
-            child: GameWidget(
-              game: slitherGame,
-              overlayBuilderMap: {
-                'pauseMenu': (context, game) => PauseMenu(game: game as SlitherGame),
-                'gameOver': (context, game) => GameOverMenu(
-                  game: game as SlitherGame,
-                  playerController: slitherGame.playerController,
-                ),
-                'revive': (context, game) {
-                  Get.put(ReviveController(game: game as SlitherGame));
-                  return const ReviveOverlay();
+      body: SafeArea(
+        bottom: true,
+        top: false,
+        child: Column(
+          children: [
+            // Game widget takes up most of the screen
+            Expanded(
+              child: GameWidget(
+                game: slitherGame,
+                overlayBuilderMap: {
+                  'pauseMenu': (context, game) => PauseMenu(game: game as SlitherGame),
+                  'gameOver': (context, game) => GameOverMenu(
+                    game: game as SlitherGame,
+                    playerController: slitherGame.playerController,
+                  ),
+                  'revive': (context, game) {
+                    Get.put(ReviveController(game: game as SlitherGame));
+                    return const ReviveOverlay();
+                  },
                 },
-              },
+              ),
             ),
-          ),
-          //TODO : add again banner ad after game live
-          // Banner ad at the bottom with fallback
-          Obx(() {
-            final bannerWidget = _adService.getBannerAdWidget();
+            //TODO : add again banner ad after game live
+            // Banner ad at the bottom with fallback
+            Obx(() {
+              final bannerWidget = _adService.getBannerAdWidget();
 
-            // If ad is ready, show it
-            if (bannerWidget != null && _adService.isBannerAdReady.value) {
-              return Container(
-                color: Colors.black,
-                child: SafeArea(
-                  top: false,
-                  child: bannerWidget,
-                ),
-              );
-            }
-            // If ad failed to load, show nothing (no space)
-            else if (_adService.bannerAdFailed.value) {
-              return const SizedBox.shrink(); // No space when ad fails
-            }
-            // If ad is loading, show subtle loading indicator
-            else {
-              return Container(
-                height: 50, // Standard banner height
-                color: Colors.black,
-                child: Center(
-                  child: SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        Colors.white.withOpacity(0.3),
+              // If ad is ready, show it
+              if (bannerWidget != null && _adService.isBannerAdReady.value) {
+                return Container(
+                  color: Colors.black,
+                  child: SafeArea(
+                    top: false,
+                    child: bannerWidget,
+                  ),
+                );
+              }
+              // If ad failed to load, show nothing (no space)
+              else if (_adService.bannerAdFailed.value) {
+                return const SizedBox.shrink(); // No space when ad fails
+              }
+              // If ad is loading, show subtle loading indicator
+              else {
+                return Container(
+                  height: 50, // Standard banner height
+                  color: Colors.black,
+                  child: Center(
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.white.withOpacity(0.3),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
-            }
-          }),
-        ],
+                );
+              }
+            }),
+          ],
+        ),
       ),
     );
   }

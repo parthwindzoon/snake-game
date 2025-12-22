@@ -84,7 +84,7 @@ class FoodManager {
     }
 
     if (removedCount > 5 || spawnedCount > 5) {
-      print('Food Update -> Removed: $removedCount, Spawned: $spawnedCount, Total: ${foodList.length}');
+      // print('Food Update -> Removed: $removedCount, Spawned: $spawnedCount, Total: ${foodList.length}');
     }
   }
 
@@ -153,11 +153,11 @@ class FoodManager {
     final actualFoodAmount = min(foodAmount, spaceAvailable);
 
     if (actualFoodAmount <= 0) {
-      print('Food limit reached, no food scattered from AI snake death');
+      // print('Food limit reached, no food scattered from AI snake death');
       return;
     }
 
-    print('AI Snake death: Scattering $actualFoodAmount food pellets along body');
+    // print('AI Snake death: Scattering $actualFoodAmount food pellets along body');
 
     // Distribute food evenly along the snake's body
     final totalPositions = bodySegments.length;

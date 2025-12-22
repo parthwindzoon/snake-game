@@ -769,7 +769,7 @@ class LearningAiManager extends Component with HasGameReference<SlitherGame> {
   }
 
   void _startDeathAnimation(AiSnakeData snake, {bool isRevengeDeath = false}) {
-    print('Starting death animation for snake with ${snake.segmentCount} segments');
+    // print('Starting death animation for snake with ${snake.segmentCount} segments');
     _dyingSnakes.add(snake);
     snake.deathAnimationTimer = isRevengeDeath
         ? AiSnakeData.deathAnimationDuration * 1.5
@@ -1071,14 +1071,12 @@ class LearningAiManager extends Component with HasGameReference<SlitherGame> {
     snake.rebuildBoundingBox();
 
     snakes.add(snake);
-    print('🧠 Spawned learning AI snake with $segmentCount segments');
     return snake;
   }
 
   /// Reset learning system for new game
   void resetLearning() {
     behaviorAnalyzer.reset();
-    print('🧠 Learning system reset for new game');
   }
 
   int get totalSnakeCount => snakes.length;

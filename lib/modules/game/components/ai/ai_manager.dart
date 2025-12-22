@@ -133,7 +133,7 @@ class AiManager extends Component with HasGameReference<SlitherGame> {
   }
 
   void _startDeathAnimation(AiSnakeData snake, {bool isRevengeDeath = false}) {
-    print('Starting death animation for snake with ${snake.segmentCount} segments');
+    // print('Starting death animation for snake with ${snake.segmentCount} segments');
 
     _dyingSnakes.add(snake);
 

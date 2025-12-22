@@ -412,15 +412,15 @@ class PlayerBehaviorAnalyzer {
   }
 
   void _logLearningProgress() {
-    print('🧠 AI LEARNING UPDATE:');
-    print('   Player Aggression: ${(pattern.aggressivenessScore * 100).toInt()}%');
-    print('   Risk Taking: ${(pattern.riskTakingScore * 100).toInt()}%');
-    print('   Food Priority: ${(pattern.foodPriorityScore * 100).toInt()}%');
-    print('   Retreat Tendency: ${(pattern.retreatTendency * 100).toInt()}%');
-    print('   Kills: ${pattern.killCount} | Food: ${pattern.foodCollectedCount}');
-    print('   Best Strategy: ${memory.getMostEffectiveStrategy()}');
-    print('   Weaknesses Found: ${memory.exploitableWeaknesses.length}');
-    print('   Adapted Aggression: ${(adaptiveBehavior.adaptedAggression * 100).toInt()}%');
+    // print('🧠 AI LEARNING UPDATE:');
+    // print('   Player Aggression: ${(pattern.aggressivenessScore * 100).toInt()}%');
+    // print('   Risk Taking: ${(pattern.riskTakingScore * 100).toInt()}%');
+    // print('   Food Priority: ${(pattern.foodPriorityScore * 100).toInt()}%');
+    // print('   Retreat Tendency: ${(pattern.retreatTendency * 100).toInt()}%');
+    // print('   Kills: ${pattern.killCount} | Food: ${pattern.foodCollectedCount}');
+    // print('   Best Strategy: ${memory.getMostEffectiveStrategy()}');
+    // print('   Weaknesses Found: ${memory.exploitableWeaknesses.length}');
+    // print('   Adapted Aggression: ${(adaptiveBehavior.adaptedAggression * 100).toInt()}%');
   }
 
   /// Get recommended strategy against this player

@@ -19,6 +19,14 @@ void main() async {
 
   //TODO: after live uncomment this
   await MobileAds.instance.initialize();
+
+  final RequestConfiguration requestConfiguration = RequestConfiguration(
+    maxAdContentRating: MaxAdContentRating.g,
+    tagForChildDirectedTreatment: TagForChildDirectedTreatment.yes,
+    tagForUnderAgeOfConsent: TagForUnderAgeOfConsent.yes,
+  );
+  await MobileAds.instance.updateRequestConfiguration(requestConfiguration);
+
   await Flame.device.fullScreen();
   await GetStorage.init();
   await SettingsService().init();
